@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AgriSmart AI - Smart Harvest</title>
+  <style>
+    /* Basic Reset and Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      color: #333;
+      line-height: 1.6;
+    }
+    /* Header with Flex Layout for Brand and Weather Info */
+    header {
+      background: #228b22;
+      color: #fff;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-left {}
+    .header-right {}
+    header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    header p {
+      font-size: 1rem;
+    }
+    .weather-api {
+      text-align: right;
+    }
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem 0;
+    }
+    /* Page Sections */
+    .page-section {
+      background: #fff;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin-bottom: 1rem;
+      color: #228b22;
+    }
+    p {
+      margin-bottom: 1rem;
+    }
+    .button {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      background: #228b22;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+    /* Authentication Forms */
+    .auth-container {
+      width: 90%;
+      max-width: 400px;
+      margin: 5rem auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .auth-container h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #228b22;
+    }
+    .auth-container form {
+      display: flex;
+      flex-direction: column;
+    }
+    .auth-container input {
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .auth-container button {
+      padding: 0.5rem;
+      background: #228b22;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+    .auth-container .google-btn {
+      background: #dd4b39;
+      border: none;
+      width: 100%;
+      padding: 0;
+    }
+    .auth-container p {
+      text-align: center;
+    }
+    .auth-container a {
+      color: #228b22;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    /* Main Page Navigation */
+    .main-nav {
+      background: #228b22;
+      padding: 0.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+    }
+    .main-nav ul {
+      list-style: none;
+      display: inline-flex;
+      gap: 1rem;
+    }
+    .main-nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    /* Main Page Subsections */
+    .sub-section {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+    /* Fixed Chatbot Widget */
+    .chatbot-widget {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 300px;
+      max-width: 90%;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      z-index: 1000;
+    }
+    .chatbot-header {
+      background: #228b22;
+      color: #fff;
+      padding: 0.5rem;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .chatbot-body {
+      height: 200px;
+      overflow-y: auto;
+      padding: 0.5rem;
+    }
+    .chatbot-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+    .chatbot-input input {
+      flex: 1;
+      border: none;
+      padding: 0.5rem;
+    }
+    .chatbot-input button {
+      border: none;
+      padding: 0.5rem;
+      background: #228b22;
+      color: #fff;
+      cursor: pointer;
+    }
+    footer {
+      background: #333;
+      color: #fff;
+      text-align: center;
+      padding: 1rem 0;
+    }
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+      }
+      .header-right {
+        margin-top: 0.5rem;
+      }
+      header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+  <!-- Load Google Identity Services library -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <!-- Header with Brand and Weather Info -->
+  <header>
+    <div class="header-left">
+      <h1>Smart Harvest</h1>
+      <p>Empowering Farmers with Data-Driven Insights</p>
+    </div>
+    <div class="header-right">
+      <div class="weather-api">
+        <!-- Replace this with dynamic weather API integration -->
+        <p>Current Weather: Sunny, 28°C</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Sign Up Section (Default View) -->
+    <section id="signup" class="page-section">
+      <div class="auth-container">
+        <h2>Create an Account</h2>
+        <form id="signup-form">
+          <input type="text" name="fullname" placeholder="Full Name" required />
+          <input type="email" name="email" placeholder="Email Address" required />
+          <input type="password" name="password" placeholder="Password" required />
+          <input type="password" name="confirm_password" placeholder="Confirm Password" required />
+          <button type="submit">Sign Up</button>
+        </form>
+        <!-- Google Sign Up Button with Logo -->
+        <div id="g_id_onload"
+             data-client_id="YOUR_GOOGLE_CLIENT_ID"
+             data-context="signup"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="signup_with"
+             data-size="large"
+             data-logo_alignment="left">
+        </div>
+        <p>Already have an account? <a id="go-to-signin">Sign In</a></p>
+      </div>
+    </section>
+
+    <!-- Sign In Section -->
+    <section id="signin" class="page-section" style="display: none;">
+      <div class="auth-container">
+        <h2>Sign In</h2>
+        <form id="signin-form">
+          <input type="email" name="email" placeholder="Email Address" required />
+          <input type="password" name="password" placeholder="Password" required />
+          <button type="submit">Sign In</button>
+        </form>
+        <p>Don't have an account? <a id="go-to-signup">Sign Up</a></p>
+      </div>
+    </section>
+
+    <!-- Main Page Section (Displayed after Sign In) -->
+    <section id="main-page" class="page-section" style="display: none;">
+      <!-- Secondary Navigation for Main Page -->
+      <nav class="main-nav">
+        <ul>
+          <li><a href="#section-home">Home</a></li>
+          <li><a href="#section-crop">Crop</a></li>
+          <li><a href="#section-fertilizer">Fertilizer</a></li>
+          <li><a href="#section-aboutus">About Us</a></li>
+        </ul>
+      </nav>
+
+      <!-- Home Sub-Section -->
+      <div id="section-home" class="sub-section">
+        <h2>Welcome to Smart Harvest</h2>
+        <p>
+          Discover innovative farming techniques and technology-driven insights to boost your crop yield and efficiency.
+        </p>
+        <!-- Soil Monitoring Data Placeholder -->
+        <div id="soil-monitoring">Loading soil monitoring data...</div>
+      </div>
+
+      <!-- Crop Sub-Section -->
+      <div id="section-crop" class="sub-section">
+        <h2>Crop Details</h2>
+        <p>
+          Growing Rice: Sowing, Cultivating, And Harvesting
+From the perspective of global food security, rice is a crucial crop. Yet, rice growing practices are still frequently reliant on outdated manual methods that are inefficient in terms of both industrial agriculture and environmental impact. Some of the environmental costs of today’s rice paddy growing include the flooding of land to make it into cultivation fields, the massive emissions of greenhouse gases, and the overuse of agrochemicals. Fortunately, there are numerous methods (such as the use of current agricultural technologies) of how to grow rice more wisely, profitably, and sustainably.
+
+Table Of Contents
+Importance Of Rice And Its Growing To Global Nutrition
+Rice, a grain high in starch, is a mainstay of the diets of about half of the world’s population. No other crop cultivation is as crucial to human feed, the agricultural economy, and the planet’s ecosystem as rice growing. While these crops, especially newly planted ones, need a wet environment, paddies (flooded lowlands and waterlogged fields around rivers) are common places to grow them.
+
+Oryza sativa, also known as Asian rice, is the most frequently cultivated and consumed type of rice in the world. There are two main kinds of rice: indica, with longer grains, and japonica, with shorter grains. Some species, such as brown rice, come in both long- and short-grain varieties. The long-grain crop is lower in starch and higher in dry matter than its short-grain relative. Growing long-grain rice has the highest economic return of all rice cultivars.
+
+The most widely consumed rice varieties are as follows:
+
+long-grain: Basmati, Jasmine, Mogra, Carolina Gold, Wild, Red, and Black Rice;
+medium-to-short-grain: Arborio, Koshihikari, Valencia, Carnaroli, Calasparra, Baldo, and Bomba.
+With a growing global population, rice remains an essential staple food. Hence, it is crucial to grow it as efficiently as possible by considering the best conditions for rice growth while also minimizing negative impacts on the surrounding environment.
+
+full grown rice plant
+Optimal Growing Conditions For Rice
+Growing rice, like any other crop, needs certain conditions to thrive. The most crucial rice growth requirements are related to climate and soil. Now, we’ll consider what growing conditions lead to a bumper crop and which regions should expect the finest harvests.
+
+Ideal Climate For Growing Rice
+Originally from tropical regions, rice is a warm-season crop that requires constant heat and humidity to grow. It can be cultivated as an annual in warm climates, though, even if you don’t reside in the tropics.
+
+Where is rice grown?
+Most of the world’s rice grows in Asia, specifically in China, India, Bangladesh, Indonesia, and Vietnam. At the same time, Africa, Europe, the Americas, and Oceania all have some warm areas with suitable rice growing climates.
+
+During the growing season, the best temperature for rice is between 70°F and 99°F (21°C and 37°C). Soil temperatures above 99 degrees Fahrenheit (37 degrees Celsius) have a harmful effect on crop. It is possible to grow it only where nighttime lows stay at 60°F (15°C) or higher for a minimum of three months annually. How come it’s so important? Germination is temperature-dependent, so the lows for the growing crop must always be above that mark.
+
+The water needs of growing rice far exceed those of any other crop. Thus, only in locations with a minimum annual rainfall of 45 inches (115 cm) does rice growing take place. The best growing conditions can be found in areas where yearly rainfall is between 69 and 118 inches (175 and 300 cm) on average. Paddies must be inundated for at least 10 weeks during the growing season, with water depths ranging from 1 inch (25 mm) at the transplanting stage to as much as 6 inches (150 mm) throughout the crop lifecycle.
+
+Ideal Soil For Growing Rice
+What type of soil does rice grow in? While it’s true that it can grow in just about any type of soil, it’s most successful in rich, well-drained soils that can hold onto moisture. All soil types, from sand to clay, will be suitable provided that they have an optimal rice growing pH of between 5 and 7.5. Soils high in clay and silt, which are often unsuitable for growing other crops, are ideal for growing rice plants because of how effectively they hold water. As the crop needs a great deal of water, it’s best to plant it in soils that are easy to flood.
+
+paddy near mountains
+How To Plant Rice
+Large-scale planting demands thorough planning, accurate execution, and constant monitoring. To guarantee a prosperous crop, major agricultural companies must take the following actions:
+
+choose a location with flat terrain and enough water resources. The soil needs to be both nutrient-rich and well-drained;
+prepare the land by getting rid of any rocks, trash, and weeds in the rice growing field. Plowing and leveling will provide a uniformly smooth and flat land surface. Amend the soil with organic matter and fertilizers as you see fit;
+choose premium rice seeds for planting, with localized breeding for high yield and disease resistance;
+guard the seeds against diseases and pests by using fungicides and pesticides;
+plant seeds with a mechanical planter to ensure uniform spacing. The ideal depth for sowing seeds is about an inch (2–3 cm), and the recommended planting distance between rows of rice is 8–10 inches (20–25 cm).
+By following these guidelines, large agricultural enterprises may build a solid foundation for plentiful crop production.
+
+EOSDA Crop Monitoring
+Using satellite monitoring for remote fields management in one platform!
+
+Different Ways Of Growing Rice
+Methods of growing rice range from manual to highly automated, from traditional to cutting-edge. But most countries still rely on tried-and-true growing methods that have been around for generations. Let’s have a look at the most typical approaches:
+
+Wet growing. Rice traditionally grows in flooded areas, or paddies. First, water (several inches deep) is poured into the paddies until the plants are submerged, and then, before harvesting, it is drained from the rice growing plantation.
+Dry growing. Here, the crop grows in fields that are not flooded. This method is good for growing paddy crops in regions with reduced rainfall or a lack of water supplies.
+Upland growing is well-suited for areas, such as hills or mountains, where the topography does not permit flooding. Terrace farming allows for growing crops on slopes causing minimal soil erosion.
+Aerobic (aeroponic) growing is employed in places where water is scarce or flooding is not an option. The crop grows in soil that drains effectively and is only watered sparingly when needed.
+System of Rice Intensification (SRI). This type of rice growing prioritizes plant density, soil condition, and irrigation to boost yields. It calls for planting seedlings at a younger age, with more space between them, and with less water than conventional approaches imply 
+.
+Aquaponics, or rice-fish growing, is a technique for cultivation that combines wet growing with fish farming. In flooded areas, fish are farmed alongside crops, and their feces serve as fertilizer.
+Environmental conditions and available resources typically dictate the way to grow crops. Farmers must select the approach that best suits their unique needs based on the benefits and drawbacks of each option.
+
+terrace cultivation of rice
+Why Is Rice Better Grown In Water?
+Growing rice needs much water to thrive. For this reason, growing rice over water rather than land is preferred. This approach to growing has many advantages:
+
+the growing crops can easily get to the water they need, with less water being wasted due to evaporation;
+paddy fields keep the water level constant, which is crucial for rice plant growth and development;
+most weeds and pests perish in the water;
+at the same time, water serves to offer a habitat for numerous aquatic species helpful to the environment. Certain fish and bird varieties prosper in the wetland where rice is grown and even act as natural pest controllers.
+Rice growing in water has the best conditions for producing high yields. Growing the crop in flooded fields is a time-tested and efficient practice. As a result, it has become a cultivation standard.
+
+        </p>
+        <ul>
+          <li><strong>Crop Variety:</strong> RICE (Triticum aestivum)</li>
+          <li><strong>Planting Date:</strong> March 15, 2025</li>
+          <li><strong>Expected Yield:</strong> 4 tons/ha</li>
+          <li><strong>Growth Stage:</strong> Vegetative</li>
+          <li><strong>Water Requirement:</strong> 20mm/week</li>
+        </ul>
+      </div>
+
+      <!-- Fertilizer Sub-Section -->
+      <div id="section-fertilizer" class="sub-section">
+        <h2>Fertilizer Details</h2>
+        <p>
+CottoN™ is the most suitable polymer-coated controlled release fertilizer for rice since it is a polymer coated urea with 4-month release longevity. One base-dressing application of teN™ enables avoiding top-dressing application and prevents nitrogen loses by leaching.        </p>
+        <ul>
+          <li><strong>Soil pH:</strong> 6.5</li>
+          <li><strong>Nutrient Deficiency:</strong> Low nitrogen levels</li>
+          <li><strong>Recommended Fertilizer:</strong> Urea-based fertilizer at 50kg/ha</li>
+          <li><strong>Application Schedule:</strong> Every 3 months</li>
+        </ul>
+      </div>
+
+      <!-- About Us Sub-Section -->
+      <div id="section-aboutus" class="sub-section">
+        <h2>About Us</h2>
+        <p>
+         Smart harvest, is a holistic digital platform designed to empower farmers with essential tools and information, leveraging technology to enhance agricultural practices and improve livelihoods.</P>
+      </div>
+    </section>
+  </div>
+
+  <!-- Fixed Chatbot Widget with Dialogflow API Integration -->
+  <div class="chatbot-widget">
+    <div class="chatbot-header">AI Bot</div>
+    <div class="chatbot-body">
+      <!-- Initial AI Bot welcome message -->
+      <p>Bot: Hello, I'm your AI assistant. How can I help you today?</p>
+    </div>
+    <div class="chatbot-input">
+      <input type="text" placeholder="Type your question..." />
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 AgriSmart AI. All Rights Reserved.</p>
+  </footer>
+
+  <!-- JavaScript for Flow Simulation, Soil Monitoring, and Dialogflow API Integration -->
+  <script>
+    // Function to show the selected section and hide others
+    function showSection(sectionId) {
+      document.getElementById('signup').style.display = (sectionId === 'signup') ? 'block' : 'none';
+      document.getElementById('signin').style.display = (sectionId === 'signin') ? 'block' : 'none';
+      document.getElementById('main-page').style.display = (sectionId === 'main-page') ? 'block' : 'none';
+    }
+
+    // Simulate Sign Up submission: prevent form submission and go to Sign In
+    document.getElementById('signup-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Here you could add form validation or API calls
+      showSection('signin');
+    });
+
+    // Handle "Already have an account? Sign In" link on Sign Up page
+    document.getElementById('go-to-signin').addEventListener('click', function(e) {
+      e.preventDefault();
+      showSection('signin');
+    });
+
+    // Simulate Sign In submission: prevent form submission and go to Main Page
+    document.getElementById('signin-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Here you could validate credentials before navigating to Main Page
+      showSection('main-page');
+      // Call the soil monitoring API after showing the main page
+      fetchSoilMonitoringData();
+    });
+
+    // Handle "Don't have an account? Sign Up" link on Sign In page
+    document.getElementById('go-to-signup').addEventListener('click', function(e) {
+      e.preventDefault();
+      showSection('signup');
+    });
+
+    // Google Sign Up Callback
+    function handleCredentialResponse(response) {
+      // For demonstration, simply log the JWT credential and navigate to Sign In.
+      console.log("Encoded JWT ID token: " + response.credential);
+      alert("Google sign up successful!");
+      showSection('signin');
+    }
+
+    // Function to fetch soil monitoring data from a dummy API endpoint
+    function fetchSoilMonitoringData() {
+      // Replace the URL below with your actual soil monitoring API endpoint
+      fetch('https://api.example.com/soil-monitoring')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('soil-monitoring').innerText =
+            `Soil Moisture: ${data.moisture}%, Soil pH: ${data.ph}, Nutrient Level: ${data.nutrients}`;
+        })
+        .catch(error => {
+          console.error('Error fetching soil monitoring data:', error);
+          document.getElementById('soil-monitoring').innerText =
+            'Soil monitoring data is currently unavailable.';
+        });
+    }
+
+    // Dialogflow API Integration for AI Bot
+    document.getElementById('send-btn').addEventListener('click', function() {
+      const inputField = document.querySelector('.chatbot-input input');
+      const message = inputField.value.trim();
+      if (message === '') return;
+      
+      // Append user message to chatbot body
+      const chatBody = document.querySelector('.chatbot-body');
+      const userMessageElement = document.createElement('p');
+      userMessageElement.textContent = "You: " + message;
+      chatBody.appendChild(userMessageElement);
+      inputField.value = '';
+      
+      // Send message to Dialogflow API
+      sendMessageToDialogflow(message);
+    });
+    
+    function sendMessageToDialogflow(message) {
+      // Replace YOUR_PROJECT_ID, YOUR_SESSION_ID, and YOUR_DIALOGFLOW_ACCESS_TOKEN with actual values.
+      const projectId = "YOUR_PROJECT_ID";
+      const sessionId = "YOUR_SESSION_ID"; // Use a unique session id for each conversation
+      fetch(`https://dialogflow.googleapis.com/v2/projects/${projectId}/agent/sessions/${sessionId}:detectIntent`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_DIALOGFLOW_ACCESS_TOKEN"
+        },
+        body: JSON.stringify({
+          queryInput: {
+            text: {
+              text: message,
+              languageCode: "en-US"
+            }
+          }
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const reply = data.queryResult.fulfillmentText;
+        const chatBody = document.querySelector('.chatbot-body');
+        const botReplyElement = document.createElement('p');
+        botReplyElement.textContent = "Bot: " + reply;
+        chatBody.appendChild(botReplyElement);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      })
+      .catch(error => {
+        console.error('Error calling Dialogflow API:', error);
+        const chatBody = document.querySelector('.chatbot-body');
+        const errorElement = document.createElement('p');
+        errorElement.textContent = "Bot: Sorry, I'm having trouble responding right now.";
+        chatBody.appendChild(errorElement);
+      });
+    }
+  </script>
+</body>
+</html>
